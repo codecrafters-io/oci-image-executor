@@ -1,0 +1,19 @@
+{
+  "config": {
+    "User": "alice",
+    "ExposedPorts": {},
+    "Env": [
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "TEST=yes"
+    ],
+    "Entrypoint": null,
+    "Cmd": [
+      "/bin/sh",
+      "-c",
+      "/bin/ash -c \"echo hey\""
+    ],
+    "Volumes": null,
+    "WorkingDir": "/",
+    "Labels": null
+  }
+}

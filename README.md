@@ -1,18 +1,27 @@
-# test-image-executor
+# oci-image-executor
 
-Takes a filesystem archive from [docker export](https://docs.docker.com/engine/reference/commandline/export/) and 
-an [OCI image config](https://github.com/opencontainers/image-spec/blob/main/config.md), and executes the image 
-using firecracker.
+Executes an [OCI image](https://github.com/opencontainers/image-spec) using [Firecracker](https://github.com/firecracker-microvm/firecracker).
 
-Stdout logs are captured & exit code is relayed.
+Logs from the executed process are sent to stdout. Logs from the executor 
+itself are sent to stderr. The exit code matches that of the process.
 
 # Interface
 
-test-image-executor --image-tar image.tar --image-config image.json --volumes /var/opt/tools/tester
+```shell
+test-image-executor \
+    --image-tar image.tar \
+    --image-config image-config.json \
+    --volume /var/user-code-submission:/app \
+    --volume /tools/binary:/your-binary
+```
+
+- `--image-tar`: Path to the image tar file, created using [docker export](https://docs.docker.com/engine/reference/commandline/export/)
+- `--image-config`: Path to an [OCI image config](https://github.com/opencontainers/image-spec/blob/main/config.md) file
+- `--volume`: Copy a directory or file from the host into the VM (changes will not be synced back to the host)
 
 # Developing Locally
 
-Many of the scripts in this repository aren't customized to work on MacOS, so we use Vagrant to test this locally.
+Many of the scripts in this repository aren't customized to work on macOS, so we use Vagrant to test this locally.
 
 1. Create your Vagrant VM:
 
@@ -25,5 +34,5 @@ vagrant up
 ```shell
 vagrant ssh
 cd /var/opt/test-image-executor
-GITHUB_TOKEN="xxx" make test_local # in the vagrant shell
+make create_test_image_and_artifacts # in the vagrant shell
 ```
