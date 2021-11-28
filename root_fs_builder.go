@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 type RootFSBuilder struct {
@@ -22,7 +23,28 @@ func (b *RootFSBuilder) Build() (string, error) {
 		return "", err
 	}
 
+	if err := b.copyImageContentsIntoRootFS(); err != nil {
+		return "", err
+	}
+
+	if err := b.addInitScriptToRootFS(); err != nil {
+		return "", err
+	}
+
 	return b.rootFSPath, nil
+}
+
+func (b *RootFSBuilder) addInitScriptToRootFS() error {
+	initScriptContents := `
+#!/bin/sh
+echo "hey"
+sleep 1000
+`
+	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "/sbin/init"), []byte(initScriptContents), 0777)
+}
+
+func (b *RootFSBuilder) copyImageContentsIntoRootFS() error {
+	return RunCommandAndLogToStderr("tar", "xf", b.imageTarFilePath, "-C", b.mountedRootFSPath)
 }
 
 func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
@@ -60,14 +82,15 @@ func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
 		return err
 	}
 
-	if err = RunCommandAndLogToStderr("umount", b.rootFSPath); err != nil {
-		return err
-	}
-
 	return nil
 }
 
 func (b RootFSBuilder) Cleanup() {
+	// Required?
+	//if err = RunCommandAndLogToStderr("umount", b.rootFSPath); err != nil {
+	//	return err
+	//}
+
 	if b.rootFSPath != "" {
 		os.Remove(b.rootFSPath)
 	}

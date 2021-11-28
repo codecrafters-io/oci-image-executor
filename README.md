@@ -10,7 +10,7 @@ itself are sent to stderr. The exit code matches that of the process.
 ```shell
 oci-image-executor \
     --image-tar image.tar \
-    --image-config image-config.json \
+    --image-config image-firecracker-config.json \
     --volume /var/user-code-submission:/app \
     --volume /tools/binary:/your-binary
 ```

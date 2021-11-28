@@ -16,11 +16,10 @@ func main() {
 		os.Exit(11)
 	}
 
-	defer rootFSBuilder.Cleanup()
+	//defer rootFSBuilder.Cleanup()
 
 	fmt.Println("path")
-	fmt.Println(rootFSBuilder.mountedRootFSPath)
-	RunCommandAndLogToStderr("ls", rootFSBuilder.mountedRootFSPath)
+	fmt.Println(rootFSBuilder.mountedRootFSPath, rootFSBuilder.rootFSPath)
 
 	fmt.Printf("hello world, %s %s %s\n", config.imageConfigFilePath, config.imageTarFilePath, rootFSPath)
 }
