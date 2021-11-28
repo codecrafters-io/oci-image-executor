@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "./", "/var/opt/test-image-executor"
+  config.vm.synced_folder "./", "/var/opt/oci-image-executor"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -69,7 +69,7 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y docker-ce=5:20.10.11~3-0~ubuntu-focal docker-ce-cli=5:20.10.11~3-0~ubuntu-focal containerd.io
     usermod -aG docker vagrant
 
-    echo "installing firecracker" 
+    echo "installing firecracker"
     curl -SL https://github.com/firecracker-microvm/firecracker/releases/download/v0.25.2/firecracker-v0.25.2-x86_64.tgz -o firecracker.tgz
     tar -xf firecracker.tgz
     sudo cp release-v0.25.2-x86_64/firecracker-v0.25.2-x86_64 /usr/bin/firecracker
@@ -80,5 +80,9 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y make
 
     sudo apt-get install -y cpu-checker # adds support for kvm-ok binary
+
+    echo "installing go"
+    wget -c https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O - | sudo tar -xz -C /usr/local
+    echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
   SHELL
 end

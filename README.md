@@ -8,7 +8,7 @@ itself are sent to stderr. The exit code matches that of the process.
 # Interface
 
 ```shell
-test-image-executor \
+oci-image-executor \
     --image-tar image.tar \
     --image-config image-config.json \
     --volume /var/user-code-submission:/app \
@@ -29,10 +29,10 @@ Many of the scripts in this repository aren't customized to work on macOS, so we
 vagrant up
 ```
 
-2. SSH into the VM and run tests using a sample configuration (defined in `make test_local`):
+2. SSH into the VM and run tests using a sample image:
 
 ```shell
 vagrant ssh
-cd /var/opt/test-image-executor
-make create_test_image_and_artifacts # in the vagrant shell
+cd /var/opt/oci-image-executor
+make create_test_image # in the vagrant shell
 ```
