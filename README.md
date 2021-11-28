@@ -2,7 +2,7 @@
 
 Executes an [OCI image](https://github.com/opencontainers/image-spec) using [Firecracker](https://github.com/firecracker-microvm/firecracker).
 
-Logs from the executed process are sent to stdout. Logs from the executor 
+Logs from the executed process (both stdout and stderr) are sent to stdout. Logs from the executor 
 itself are sent to stderr. The exit code matches that of the process.
 
 # Interface
