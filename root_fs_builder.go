@@ -35,12 +35,12 @@ func (b *RootFSBuilder) Build() (string, error) {
 }
 
 func (b *RootFSBuilder) addInitScriptToRootFS() error {
-	initScriptContents := `
-#!/bin/sh
+	initScriptContents := `#!/bin/sh
 echo "hey"
-sleep 1000
-`
-	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "/sbin/init"), []byte(initScriptContents), 0777)
+sleep 1000`
+	// TODO: Find out which one of these is important!
+	ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "/sbin/init"), []byte(initScriptContents), 0777)
+	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "/init"), []byte(initScriptContents), 0777)
 }
 
 func (b *RootFSBuilder) copyImageContentsIntoRootFS() error {
@@ -82,15 +82,14 @@ func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
 		return err
 	}
 
+	if err = RunCommandAndLogToStderr("umount", b.rootFSPath); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (b RootFSBuilder) Cleanup() {
-	// Required?
-	//if err = RunCommandAndLogToStderr("umount", b.rootFSPath); err != nil {
-	//	return err
-	//}
-
 	if b.rootFSPath != "" {
 		os.Remove(b.rootFSPath)
 	}
