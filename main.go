@@ -96,7 +96,7 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 				Partuuid: "dff363d3-970f-4ea8-abfc-bb713edf9d23",
 			},
 		},
-		KernelImagePath: "/boot/vmlinux.bin",
+		KernelImagePath: "/home/vagrant/firecracker-official-vmlinux.bin",
 		KernelArgs:      "ro console=ttyS0 noapic reboot=k panic=1 pci=off init=/sbin/init",
 		LogLevel:        "Debug",
 		LogPath:         "/tmp/firecracker-logs",
