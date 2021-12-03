@@ -39,8 +39,10 @@ func (b *RootFSBuilder) addInitScriptToRootFS() error {
 echo "hey"
 sleep 1000`
 	// TODO: Find out which one of these is important!
-	ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "/sbin/init"), []byte(initScriptContents), 0777)
-	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "/init"), []byte(initScriptContents), 0777)
+	ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "sbin/init"), []byte(initScriptContents), 0777)
+	ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
+
+	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 }
 
 func (b *RootFSBuilder) copyImageContentsIntoRootFS() error {
