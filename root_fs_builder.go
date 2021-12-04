@@ -23,11 +23,11 @@ func (b *RootFSBuilder) Build() (string, error) {
 		return "", err
 	}
 
-	if err := b.copyImageContentsIntoRootFS(); err != nil {
+	if err := b.addInitScriptToRootFS(); err != nil {
 		return "", err
 	}
 
-	if err := b.addInitScriptToRootFS(); err != nil {
+	if err := RunCommandAndLogToStderr("umount", b.mountedRootFSPath); err != nil {
 		return "", err
 	}
 
@@ -36,36 +36,30 @@ func (b *RootFSBuilder) Build() (string, error) {
 
 func (b *RootFSBuilder) addInitScriptToRootFS() error {
 	initScriptContents := `#!/bin/sh
-echo "hey"
-sleep 1000`
+set -e
+mount proc /proc -t proc
+mount sysfs /sys -t sysfs
+exec /bin/sh`
 	// TODO: Find out which one of these is important!
 	ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "sbin/init"), []byte(initScriptContents), 0777)
-	ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 }
 
-func (b *RootFSBuilder) copyImageContentsIntoRootFS() error {
-	return RunCommandAndLogToStderr("tar", "xf", b.imageTarFilePath, "-C", b.mountedRootFSPath)
-}
-
 func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
-	rootFSFile, err := ioutil.TempFile("", "oci-image-executor-root-fs-")
-	if err != nil {
-		return err
-	}
+	b.rootFSPath = "/var/opt/oci-image-executor/root-fs"
+	b.mountedRootFSPath = "/var/opt/oci-image-executor/root-fs-mount"
 
-	mountedRootFsPath, err := ioutil.TempDir("", "oci-image-executor-root-fs-mount-")
-	if err != nil {
-		return err
-	}
-
-	b.rootFSPath = rootFSFile.Name()
-	b.mountedRootFSPath = mountedRootFsPath
+	os.RemoveAll(b.rootFSPath)
+	os.RemoveAll(b.mountedRootFSPath)
+	os.Mkdir(b.mountedRootFSPath, 0744)
 
 	// fallocate is faster - see if this causes problems!
+
+	var err error
+
 	// if err = RunCommandAndLogToStderr("dd", "if=/dev/zero", fmt.Sprintf("of=%s", b.rootFSPath), "bs=1M", "count=1500"); err != nil {
-	//  	return err
+	// 	return err
 	// }
 
 	if err = RunCommandAndLogToStderr("fallocate", "-l", "1.5G", b.rootFSPath); err != nil {
@@ -81,10 +75,6 @@ func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
 	}
 
 	if err = RunCommandAndLogToStderr("tar", "xf", b.imageTarFilePath, "-C", b.mountedRootFSPath); err != nil {
-		return err
-	}
-
-	if err = RunCommandAndLogToStderr("umount", b.rootFSPath); err != nil {
 		return err
 	}
 
