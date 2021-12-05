@@ -19,7 +19,12 @@ func main() {
 	config := ParseConfig()
 	config.ValidatePathsExist()
 
-	rootFSBuilder := NewRootFSBuilder(config)
+	rootFSBuilder, err := NewRootFSBuilder(config)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(11)
+	}
+
 	rootFSPath, err := rootFSBuilder.Build()
 	if err != nil {
 		fmt.Println(err)

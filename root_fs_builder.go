@@ -5,20 +5,28 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 type RootFSBuilder struct {
 	imageTarFilePath  string
+	imageConfig       ImageConfig
 	rootFSPath        string
 	mountedRootFSPath string
 	volumes           map[string]string
 }
 
-func NewRootFSBuilder(config Config) *RootFSBuilder {
+func NewRootFSBuilder(config Config) (*RootFSBuilder, error) {
+	imageConfig, err := ImageConfigFromFile(config.imageConfigFilePath)
+	if err != nil {
+		return &RootFSBuilder{}, err
+	}
+
 	return &RootFSBuilder{
+		imageConfig:      imageConfig,
 		imageTarFilePath: config.imageTarFilePath,
 		volumes:          config.volumes,
-	}
+	}, nil
 }
 
 func (b *RootFSBuilder) Build() (string, error) {
@@ -45,8 +53,9 @@ func (b *RootFSBuilder) addInitScriptToMountedRootFS() error {
 	initScriptContents := `#!/bin/sh
 set -e
 mount proc /proc -t proc
-mount sysfs /sys -t sysfs
-exec /bin/ls /var/opt/mounted-dir`
+mount sysfs /sys -t sysfs`
+
+	initScriptContents += "\n" + "exec " + strings.Join(b.imageConfig.Cmd, " ")
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 }
