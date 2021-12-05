@@ -37,9 +37,9 @@ func ParseConfig() Config {
 
 	if volumesStr != "" {
 		for _, volumeStr := range strings.Split(volumesStr, ",") {
-			hostDir := strings.Split(volumeStr, ":")[0]
+			hostPath := strings.Split(volumeStr, ":")[0]
 			guestPath := strings.Split(volumeStr, ":")[1]
-			config.volumes[guestPath] = hostDir
+			config.volumes[hostPath] = guestPath
 		}
 	}
 
