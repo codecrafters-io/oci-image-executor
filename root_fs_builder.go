@@ -39,7 +39,7 @@ func (b *RootFSBuilder) addInitScriptToRootFS() error {
 set -e
 mount proc /proc -t proc
 mount sysfs /sys -t sysfs
-exec /bin/tester`
+exec /bin/ls /var/opt/mounted-dir`
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 }
