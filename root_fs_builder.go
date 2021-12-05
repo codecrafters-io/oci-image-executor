@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
 type RootFSBuilder struct {
@@ -51,12 +52,25 @@ func (b *RootFSBuilder) Build() (string, error) {
 }
 
 func (b *RootFSBuilder) addInitScriptToMountedRootFS() error {
-	initScriptContents := `#!/bin/sh
+	initScriptTemplate := template.Must(
+		template.New("init").Parse(`#!/bin/sh
 set -e
 mount proc /proc -t proc
-mount sysfs /sys -t sysfs`
+mount sysfs /sys -t sysfs
 
-	initScriptContents += "\n" + "exec " + strings.Join(b.imageConfig.Cmd, " ")
+{{range .Env -}}
+export {{.}}
+{{end}}
+
+exec {{range .Cmd}}"{{.}}" {{end}}`),
+	)
+
+	initScriptBuilder := strings.Builder{}
+	if err := initScriptTemplate.Execute(&initScriptBuilder, b.imageConfig); err != nil {
+		panic(err)
+	}
+
+	initScriptContents := initScriptBuilder.String()
 	fmt.Println(initScriptContents)
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
