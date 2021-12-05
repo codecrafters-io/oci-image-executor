@@ -8,9 +8,7 @@
     ],
     "Entrypoint": null,
     "Cmd": [
-      "/bin/sh",
-      "-c",
-      "/bin/ash -c \"echo hey\""
+      "/bin/sh", "-c", "echo 'hey'"
     ],
     "Volumes": null,
     "WorkingDir": "/",
