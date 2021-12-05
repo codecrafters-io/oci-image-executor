@@ -28,7 +28,7 @@ func ImageConfigFromFile(filePath string) (ImageConfig, error) {
 	}
 
 	for _, envResult := range gjson.Get(string(fileContents), "config.Cmd").Array() {
-		imageConfig.Cmd = append(imageConfig.Cmd, envResult.String())
+		imageConfig.Env = append(imageConfig.Env, envResult.String())
 	}
 
 	if err = json.Unmarshal(fileContents, &imageConfig); err != nil {
