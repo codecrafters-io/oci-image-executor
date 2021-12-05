@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+
+	"github.com/tidwall/gjson"
 )
 
 type ImageConfig struct {
@@ -16,7 +18,18 @@ func ImageConfigFromFile(filePath string) (ImageConfig, error) {
 		return ImageConfig{}, err
 	}
 
-	imageConfig := ImageConfig{}
+	imageConfig := ImageConfig{
+		Cmd: []string{},
+		Env: []string{},
+	}
+
+	for _, cmdResult := range gjson.Get(string(fileContents), "config.Cmd").Array() {
+		imageConfig.Cmd = append(imageConfig.Cmd, cmdResult.String())
+	}
+
+	for _, envResult := range gjson.Get(string(fileContents), "config.Cmd").Array() {
+		imageConfig.Cmd = append(imageConfig.Cmd, envResult.String())
+	}
 
 	if err = json.Unmarshal(fileContents, &imageConfig); err != nil {
 		return ImageConfig{}, err
