@@ -26,12 +26,9 @@ func main() {
 		os.Exit(11)
 	}
 
-	//defer rootFSBuilder.Cleanup()
+	defer rootFSBuilder.Cleanup()
 
-	fmt.Println("path")
-	fmt.Println(rootFSBuilder.mountedRootFSPath, rootFSBuilder.rootFSPath)
-
-	fmt.Printf("hello world, %s %s %s\n", config.imageConfigFilePath, config.imageTarFilePath, rootFSPath)
+	fmt.Println("rootfs paths", rootFSBuilder.mountedRootFSPath, rootFSBuilder.rootFSPath)
 
 	if err := runVMM(context.Background(), rootFSPath); err != nil {
 		log.Fatalf(err.Error())

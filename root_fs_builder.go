@@ -40,27 +40,27 @@ set -e
 mount proc /proc -t proc
 mount sysfs /sys -t sysfs
 exec /bin/sh`
-	// TODO: Find out which one of these is important!
-	ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "sbin/init"), []byte(initScriptContents), 0777)
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 }
 
 func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
-	b.rootFSPath = "/var/opt/oci-image-executor/root-fs"
-	b.mountedRootFSPath = "/var/opt/oci-image-executor/root-fs-mount"
+	rootFSFile, err := ioutil.TempFile("", "oci-image-executor-root-fs-")
+	if err != nil {
+		return err
+	}
+
+	mountedRootFSPath, err := ioutil.TempDir("", "oci-image-executor-root-fs-mnt-")
+	if err != nil {
+		return err
+	}
+
+	b.rootFSPath = rootFSFile.Name()
+	b.mountedRootFSPath = mountedRootFSPath
 
 	os.RemoveAll(b.rootFSPath)
 	os.RemoveAll(b.mountedRootFSPath)
 	os.Mkdir(b.mountedRootFSPath, 0744)
-
-	// fallocate is faster - see if this causes problems!
-
-	var err error
-
-	// if err = RunCommandAndLogToStderr("dd", "if=/dev/zero", fmt.Sprintf("of=%s", b.rootFSPath), "bs=1M", "count=1500"); err != nil {
-	// 	return err
-	// }
 
 	if err = RunCommandAndLogToStderr("fallocate", "-l", "1.5G", b.rootFSPath); err != nil {
 		return err
