@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -56,6 +57,7 @@ mount proc /proc -t proc
 mount sysfs /sys -t sysfs`
 
 	initScriptContents += "\n" + "exec " + strings.Join(b.imageConfig.Cmd, " ")
+	fmt.Println(initScriptContents)
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 }
