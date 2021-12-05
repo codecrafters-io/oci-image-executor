@@ -11,8 +11,7 @@ itself are sent to stderr. The exit code matches that of the process.
 oci-image-executor \
     --image-tar image.tar \
     --image-config image-firecracker-config.json \
-    --volume /var/user-code-submission:/app \
-    --volume /tools/binary:/your-binary
+    --volumes /var/user-code-submission:/app,/tools/binary:/your-binary
 ```
 
 - `--image-tar`: Path to the image tar file, created using [docker export](https://docs.docker.com/engine/reference/commandline/export/)
