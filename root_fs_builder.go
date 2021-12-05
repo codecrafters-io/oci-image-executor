@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -10,11 +11,13 @@ type RootFSBuilder struct {
 	imageTarFilePath  string
 	rootFSPath        string
 	mountedRootFSPath string
+	volumes           map[string]string
 }
 
 func NewRootFSBuilder(config Config) *RootFSBuilder {
 	return &RootFSBuilder{
 		imageTarFilePath: config.imageTarFilePath,
+		volumes:          config.volumes,
 	}
 }
 
@@ -23,18 +26,22 @@ func (b *RootFSBuilder) Build() (string, error) {
 		return "", err
 	}
 
-	if err := b.addInitScriptToRootFS(); err != nil {
+	if err := b.copyVolumesToMountedRootFS(); err != nil {
 		return "", err
 	}
 
-	if err := RunCommandAndLogToStderr("umount", b.mountedRootFSPath); err != nil {
+	if err := b.addInitScriptToMountedRootFS(); err != nil {
+		return "", err
+	}
+
+	if err := b.unmountRootFS(); err != nil {
 		return "", err
 	}
 
 	return b.rootFSPath, nil
 }
 
-func (b *RootFSBuilder) addInitScriptToRootFS() error {
+func (b *RootFSBuilder) addInitScriptToMountedRootFS() error {
 	initScriptContents := `#!/bin/sh
 set -e
 mount proc /proc -t proc
@@ -42,6 +49,16 @@ mount sysfs /sys -t sysfs
 exec /bin/ls /var/opt/mounted-dir`
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
+}
+
+func (b *RootFSBuilder) copyVolumesToMountedRootFS() error {
+	for hostPath, guestPath := range b.volumes {
+		if err := RunCommandAndLogToStderr("cp", "-R", hostPath, path.Join(b.mountedRootFSPath, guestPath)); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
@@ -58,10 +75,6 @@ func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
 	b.rootFSPath = rootFSFile.Name()
 	b.mountedRootFSPath = mountedRootFSPath
 
-	os.RemoveAll(b.rootFSPath)
-	os.RemoveAll(b.mountedRootFSPath)
-	os.Mkdir(b.mountedRootFSPath, 0744)
-
 	if err = RunCommandAndLogToStderr("fallocate", "-l", "1.5G", b.rootFSPath); err != nil {
 		return err
 	}
@@ -75,6 +88,14 @@ func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
 	}
 
 	if err = RunCommandAndLogToStderr("tar", "xf", b.imageTarFilePath, "-C", b.mountedRootFSPath); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (b *RootFSBuilder) unmountRootFS() error {
+	if err := RunCommandAndLogToStderr("umount", b.mountedRootFSPath); err != nil {
 		return err
 	}
 
