@@ -26,5 +26,22 @@ echo "installing go"
 wget -c https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O - | sudo tar -xz -C /usr/local
 echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
 
-mkdir -p /etc/cni/conf.d/
+mkdir -p /etc/cni/conf.d
 cp fcnet.conflist /etc/cni/conf.d/
+
+mkdir /opt/cni/bin
+
+git clone https://github.com/containernetworking/plugins
+pushd plugins
+git checkout v0.8.7
+./build_linux.sh
+cp bin/ptp /opt/cni/bin
+cp bin/host-local /opt/cni/bin
+cp bin/firewall /opt/cni/bin
+popd
+
+git clone https://github.com/awslabs/tc-redirect-tap
+pushd tc-redirect-tap
+make
+cp tc-redirect-tap /opt/cni/bin
+popd
