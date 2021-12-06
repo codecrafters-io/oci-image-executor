@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"fmt"
@@ -49,6 +49,10 @@ func (b *RootFSBuilder) Build() (string, error) {
 	}
 
 	return b.rootFSPath, nil
+}
+
+func (b *RootFSBuilder) PrintDebugInfo() {
+	fmt.Println("rootfsbuilder paths", b.mountedRootFSPath, b.rootFSPath)
 }
 
 func (b *RootFSBuilder) addInitScriptToMountedRootFS() error {

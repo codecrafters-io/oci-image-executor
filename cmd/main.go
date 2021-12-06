@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/codecrafters-io/oci-image-executor/internal"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
 	"github.com/openlyinc/pointy"
 
@@ -16,10 +17,10 @@ import (
 )
 
 func main() {
-	config := ParseConfig()
+	config := internal.ParseConfig()
 	config.ValidatePathsExist()
 
-	rootFSBuilder, err := NewRootFSBuilder(config)
+	rootFSBuilder, err := internal.NewRootFSBuilder(config)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(11)
@@ -33,7 +34,7 @@ func main() {
 
 	defer rootFSBuilder.Cleanup()
 
-	fmt.Println("rootfs paths", rootFSBuilder.mountedRootFSPath, rootFSBuilder.rootFSPath)
+	rootFSBuilder.PrintDebugInfo()
 
 	if err := runVMM(context.Background(), rootFSPath); err != nil {
 		log.Fatalf(err.Error())
