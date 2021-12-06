@@ -106,6 +106,14 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 			MemSizeMib: &memSize,
 			HtEnabled:  &htEnabled,
 		},
+		NetworkInterfaces: []firecracker.NetworkInterface{
+			{
+				CNIConfiguration: &firecracker.CNIConfiguration{
+					NetworkName: "fcnet",
+					IfName:      "veth0",
+				},
+			},
+		},
 		SocketPath: "/tmp/firecracker.socket",
 	}
 	if err := config.Validate(); err != nil {
