@@ -62,6 +62,8 @@ set -e
 mount proc /proc -t proc
 mount sysfs /sys -t sysfs
 
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
 {{range .Env -}}
 export {{.}}
 {{end}}
