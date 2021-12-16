@@ -29,7 +29,7 @@ echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
 mkdir -p /etc/cni/conf.d
 cp fcnet.conflist /etc/cni/conf.d/
 
-mkdir /opt/cni/bin
+mkdir -p /opt/cni/bin
 
 git clone https://github.com/containernetworking/plugins
 pushd plugins

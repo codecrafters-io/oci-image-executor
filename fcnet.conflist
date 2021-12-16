@@ -1,5 +1,6 @@
 {
   "name": "fcnet",
+  "cniVersion": "0.4.0",
   "plugins": [
     {
       "type": "ptp",
