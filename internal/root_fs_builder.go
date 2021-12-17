@@ -61,6 +61,7 @@ func (b *RootFSBuilder) addInitScriptToMountedRootFS() error {
 set -e
 mount proc /proc -t proc
 mount sysfs /sys -t sysfs
+haveged # generate entropy
 
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 

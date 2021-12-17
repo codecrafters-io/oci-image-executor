@@ -1,3 +1,5 @@
-FROM ubuntu:20.04
+FROM alpine
 ENV TEST=yes
 CMD /bin/ash -c "echo hey"
+
+RUN apk add haveged
