@@ -42,6 +42,7 @@ popd
 
 git clone https://github.com/awslabs/tc-redirect-tap
 pushd tc-redirect-tap
+git checkout a0300978797dabc3b4ffaa4a30817d6e8dd10018
 make
 cp tc-redirect-tap /opt/cni/bin
 popd
