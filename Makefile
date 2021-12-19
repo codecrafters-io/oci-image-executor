@@ -10,3 +10,7 @@ test_executor:
 
 kill_executor:
 	kill $$(ps aux | grep firecracker | head -n 2 | tail -n 1 | awk '{print $$2}')
+
+download_kernel:
+	mkdir -p /root/firecrafter-resources
+	wget https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin -P /root/firecracker-resources/
