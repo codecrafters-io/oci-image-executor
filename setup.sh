@@ -25,9 +25,10 @@ sudo apt-get install -y cpu-checker # adds support for kvm-ok binary
 echo "installing go"
 wget -c https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O - | sudo tar -xz -C /usr/local
 echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
+export PATH=$PATH:/usr/local/go/bin
 
 mkdir -p /etc/cni/conf.d
-cp fcnet.conflist /etc/cni/conf.d/
+cp /var/opt/oci-image-executor/fcnet.conflist /etc/cni/conf.d/
 
 mkdir -p /opt/cni/bin
 
