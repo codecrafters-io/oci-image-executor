@@ -19,15 +19,15 @@ type RootFSBuilder struct {
 }
 
 func NewRootFSBuilder(config Config) (*RootFSBuilder, error) {
-	imageConfig, err := ImageConfigFromFile(config.imageConfigFilePath)
+	imageConfig, err := ImageConfigFromFile(config.ImageConfigFilePath)
 	if err != nil {
 		return &RootFSBuilder{}, err
 	}
 
 	return &RootFSBuilder{
 		imageConfig:      imageConfig,
-		imageTarFilePath: config.imageTarFilePath,
-		volumes:          config.volumes,
+		imageTarFilePath: config.ImageTarFilePath,
+		volumes:          config.Volumes,
 	}, nil
 }
 
