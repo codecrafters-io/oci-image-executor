@@ -11,11 +11,12 @@ import (
 )
 
 type RootFSBuilder struct {
-	imageTarFilePath  string
-	imageConfig       ImageConfig
-	rootFSPath        string
-	mountedRootFSPath string
-	volumes           map[string]string
+	environmentVariables map[string]string
+	imageTarFilePath     string
+	imageConfig          ImageConfig
+	rootFSPath           string
+	mountedRootFSPath    string
+	volumes              map[string]string
 }
 
 func NewRootFSBuilder(config Config) (*RootFSBuilder, error) {
@@ -25,9 +26,10 @@ func NewRootFSBuilder(config Config) (*RootFSBuilder, error) {
 	}
 
 	return &RootFSBuilder{
-		imageConfig:      imageConfig,
-		imageTarFilePath: config.ImageTarFilePath,
-		volumes:          config.Volumes,
+		environmentVariables: config.EnvironmentVariables,
+		imageConfig:          imageConfig,
+		imageTarFilePath:     config.ImageTarFilePath,
+		volumes:              config.Volumes,
 	}, nil
 }
 
@@ -65,7 +67,11 @@ haveged # generate entropy
 
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
-{{range .Env -}}
+{{range .ImageEnv -}}
+export {{.}}
+{{end}}
+
+{{range .ExecutorEnv -}}
 export {{.}}
 {{end}}
 
@@ -73,7 +79,11 @@ exec {{range .Cmd}}"{{.}}" {{end}}`),
 	)
 
 	initScriptBuilder := strings.Builder{}
-	if err := initScriptTemplate.Execute(&initScriptBuilder, b.imageConfig); err != nil {
+	if err := initScriptTemplate.Execute(&initScriptBuilder, map[string]interface{}{
+		"ExecutorEnv": b.environmentVariables,
+		"ImageEnv":    b.imageConfig.Env,
+		"Cmd":         b.imageConfig.Cmd,
+	}); err != nil {
 		panic(err)
 	}
 

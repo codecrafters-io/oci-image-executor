@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	ImageTarFilePath    string            `long:"image-tar" description:"Path to the image tar file" required:"true"`
-	ImageConfigFilePath string            `long:"image-config" description:"Path to the image config file" required:"true"`
-	Volumes             map[string]string `long:"volume" description:"A file/directory to copy into the VM. Format: /path/to/host/file:/path/to/vm/file"`
+	ImageTarFilePath     string            `long:"image-tar" description:"Path to the image tar file" required:"true"`
+	ImageConfigFilePath  string            `long:"image-config" description:"Path to the image config file" required:"true"`
+	Volumes              map[string]string `long:"volume" description:"A file/directory to copy into the VM. Format: /path/to/host/file:/path/to/vm/file"`
+	EnvironmentVariables map[string]string `long:"env" description:"Environment variables to set in the VM. Format: VAR:value (does NOT use = as delimiter)"`
 }
 
 func ParseConfig() Config {
