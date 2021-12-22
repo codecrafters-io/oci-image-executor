@@ -17,6 +17,7 @@ type RootFSBuilder struct {
 	rootFSPath           string
 	mountedRootFSPath    string
 	volumes              map[string]string
+	workingDirectory     string
 }
 
 func NewRootFSBuilder(config Config) (*RootFSBuilder, error) {
@@ -30,6 +31,7 @@ func NewRootFSBuilder(config Config) (*RootFSBuilder, error) {
 		imageConfig:          imageConfig,
 		imageTarFilePath:     config.ImageTarFilePath,
 		volumes:              config.Volumes,
+		workingDirectory:     config.WorkingDirectory,
 	}, nil
 }
 
@@ -75,14 +77,17 @@ export {{.}}
 export {{.}}
 {{end}}
 
+cd {{.WorkingDirectory}}
+
 exec {{range .Cmd}}"{{.}}" {{end}}`),
 	)
 
 	initScriptBuilder := strings.Builder{}
 	if err := initScriptTemplate.Execute(&initScriptBuilder, map[string]interface{}{
-		"ExecutorEnv": b.environmentVariables,
-		"ImageEnv":    b.imageConfig.Env,
-		"Cmd":         b.imageConfig.Cmd,
+		"ExecutorEnv":      b.environmentVariables,
+		"ImageEnv":         b.imageConfig.Env,
+		"Cmd":              b.imageConfig.Cmd,
+		"WorkingDirectory": b.workingDirectory,
 	}); err != nil {
 		panic(err)
 	}
