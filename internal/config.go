@@ -12,7 +12,8 @@ type Config struct {
 	ImageTarFilePath     string            `long:"image-tar" description:"Path to the image tar file" required:"true"`
 	ImageConfigFilePath  string            `long:"image-config" description:"Path to the image config file" required:"true"`
 	Volumes              map[string]string `long:"volume" description:"A file/directory to copy into the VM. Format: /path/to/host/file:/path/to/vm/file"`
-	EnvironmentVariables []string          `long:"env" description:"Environment variables to set in the VM. Format: VAR=value"`
+	EnvironmentVariables []string          `long:"env" description:"Environment variables for the process. Format: VAR=value"`
+	WorkingDirectory     string            `long:"working-dir" description:"Working directory for the process." default:"/"`
 }
 
 func ParseConfig() Config {

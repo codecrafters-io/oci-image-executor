@@ -10,7 +10,7 @@
     "Cmd": [
       "/bin/sh",
       "-c",
-      "echo 'hey'"
+      "ls"
     ],
     "Volumes": null,
     "WorkingDir": "/",
