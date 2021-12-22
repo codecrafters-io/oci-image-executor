@@ -2,45 +2,24 @@ package internal
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"os"
-	"strings"
+
+	flags "github.com/jessevdk/go-flags"
 )
 
 type Config struct {
-	ImageTarFilePath    string
-	ImageConfigFilePath string
-	Volumes             map[string]string
+	ImageTarFilePath    string            `long:"image-tar" description:"Path to the image tar file" required:"true"`
+	ImageConfigFilePath string            `long:"image-config" description:"Path to the image config file" required:"true"`
+	Volumes             map[string]string `long:"volume" description:"A file/directory to copy into the VM. Format: /path/to/host/file:/path/to/vm/file"`
 }
 
 func ParseConfig() Config {
-	volumesStr := ""
-
 	var config Config
-	flag.StringVar(&config.ImageTarFilePath, "image-tar", "", "Path to the image tar file")
-	flag.StringVar(&config.ImageConfigFilePath, "image-config", "", "Path to the image config file")
-	flag.StringVar(&volumesStr, "Volumes", "", "Comma separated list of files/director to copy into VM")
-	flag.Parse()
 
-	if config.ImageTarFilePath == "" {
-		fmt.Println("-image-tar not provided")
+	if _, err := flags.Parse(&config); err != nil {
+		fmt.Println("Error parsing arguments.")
 		os.Exit(11) // Helps differentiate between exit code from process and exit code from executor
-	}
-
-	if config.ImageConfigFilePath == "" {
-		fmt.Println("image-config not provided")
-		os.Exit(11) // Helps differentiate between exit code from process and exit code from executor
-	}
-
-	config.Volumes = map[string]string{}
-
-	if volumesStr != "" {
-		for _, volumeStr := range strings.Split(volumesStr, ",") {
-			hostPath := strings.Split(volumeStr, ":")[0]
-			guestPath := strings.Split(volumeStr, ":")[1]
-			config.Volumes[hostPath] = guestPath
-		}
 	}
 
 	return config
@@ -48,12 +27,12 @@ func ParseConfig() Config {
 
 func (c Config) ValidatePathsExist() {
 	if _, err := os.Stat(c.ImageTarFilePath); errors.Is(err, os.ErrNotExist) {
-		fmt.Println("image tar file does not exist")
+		fmt.Printf("image tar file '%s' does not exist\n", c.ImageTarFilePath)
 		os.Exit(11) // Helps differentiate between exit code from process and exit code from executor
 	}
 
 	if _, err := os.Stat(c.ImageConfigFilePath); errors.Is(err, os.ErrNotExist) {
-		fmt.Println("image config file does not exist")
+		fmt.Printf("image config file '%s' does not exist\n", c.ImageTarFilePath)
 		os.Exit(11) // Helps differentiate between exit code from process and exit code from executor
 	}
 
