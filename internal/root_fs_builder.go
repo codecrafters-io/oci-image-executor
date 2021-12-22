@@ -11,7 +11,7 @@ import (
 )
 
 type RootFSBuilder struct {
-	environmentVariables map[string]string
+	environmentVariables []string
 	imageTarFilePath     string
 	imageConfig          ImageConfig
 	rootFSPath           string
