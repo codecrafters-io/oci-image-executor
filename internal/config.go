@@ -9,6 +9,7 @@ import (
 )
 
 type Config struct {
+	Cmd                  []string
 	ImageTarFilePath     string            `long:"image-tar" description:"Path to the image tar file" required:"true"`
 	ImageConfigFilePath  string            `long:"image-config" description:"Path to the image config file" required:"true"`
 	Volumes              map[string]string `long:"volume" description:"A file/directory to copy into the VM. Format: /path/to/host/file:/path/to/vm/file"`
@@ -19,10 +20,18 @@ type Config struct {
 func ParseConfig() Config {
 	var config Config
 
-	if _, err := flags.Parse(&config); err != nil {
+	remainingArgs, err := flags.Parse(&config)
+
+	if err != nil {
 		fmt.Println("Error parsing arguments.")
 		os.Exit(11) // Helps differentiate between exit code from process and exit code from executor
 	}
+
+	if len(remainingArgs) == 0 || (remainingArgs[0] == "") {
+		fmt.Println("Expected cmd arg to be provided")
+	}
+
+	config.Cmd = remainingArgs
 
 	return config
 }

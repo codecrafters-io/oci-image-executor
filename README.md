@@ -13,6 +13,7 @@ oci-image-executor \
     --image-config image-firecracker-config.json \
     --volume /var/user-code-submission:/app
     --volume /tools/binary:/your-binary
+    /usr/bin/binary-to-execute
 ```
 
 - `--image-tar`: Path to the image tar file, created using [docker export](https://docs.docker.com/engine/reference/commandline/export/)

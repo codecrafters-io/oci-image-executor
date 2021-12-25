@@ -11,6 +11,7 @@ import (
 )
 
 type RootFSBuilder struct {
+	cmd                  []string
 	environmentVariables []string
 	imageTarFilePath     string
 	imageConfig          ImageConfig
@@ -27,6 +28,7 @@ func NewRootFSBuilder(config Config) (*RootFSBuilder, error) {
 	}
 
 	return &RootFSBuilder{
+		cmd:                  config.Cmd,
 		environmentVariables: config.EnvironmentVariables,
 		imageConfig:          imageConfig,
 		imageTarFilePath:     config.ImageTarFilePath,
@@ -86,7 +88,7 @@ exec {{range .Cmd}}"{{.}}" {{end}}`),
 	if err := initScriptTemplate.Execute(&initScriptBuilder, map[string]interface{}{
 		"ParsedExecutorEnv": parseEnv(b.environmentVariables),
 		"ParsedImageEnv":    parseEnv(b.imageConfig.Env),
-		"Cmd":               b.imageConfig.Cmd,
+		"Cmd":               b.cmd,
 		"WorkingDirectory":  b.workingDirectory,
 	}); err != nil {
 		panic(err)

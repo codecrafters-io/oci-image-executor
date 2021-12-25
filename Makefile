@@ -17,7 +17,7 @@ create_redis_image:
 
 test_executor: build
 	sudo rm -rf /tmp/firecracker.socket
-	sudo ./main --image-tar=image.tar --image-config=image-config.json --volume /var/opt/oci-image-executor:/var/opt/mounted-dir --env TEST=hey --working-dir="/var/opt/mounted-dir"
+	sudo ./main --image-tar=image.tar --image-config=image-config.json --volume /var/opt/oci-image-executor:/var/opt/mounted-dir --env TEST=hey --working-dir="/var/opt/mounted-dir" /usr/bin/ls
 
 kill_executor:
 	kill $$(ps aux | grep firecracker | head -n 2 | tail -n 1 | awk '{print $$2}')
