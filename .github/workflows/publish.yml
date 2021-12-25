@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  publish_tester:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
