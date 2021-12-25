@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/codecrafters-io/oci-image-executor/internal"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
@@ -26,11 +27,15 @@ func main() {
 		os.Exit(11)
 	}
 
+	fmt.Println("Before RootFS Build", time.Now().Format("2006.01.02 15:04:05.50"))
+
 	rootFSPath, err := rootFSBuilder.Build()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(11)
 	}
+
+	fmt.Println("After RootFS Build", time.Now().Format("2006.01.02 15:04:05.50"))
 
 	defer rootFSBuilder.Cleanup()
 
