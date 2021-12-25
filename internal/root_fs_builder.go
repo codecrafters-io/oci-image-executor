@@ -69,12 +69,12 @@ haveged # generate entropy
 
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
-{{range .ImageEnv -}}
-export {{.}}
+{{range $key, $value := .ParsedImageEnv -}}
+export {{$key}}="{{$value}}"
 {{end}}
 
-{{range .ExecutorEnv -}}
-export {{.}}
+{{range $key, $value := .ParsedExecutorEnv -}}
+export {{$key}}="{{$value}}"
 {{end}}
 
 cd {{.WorkingDirectory}}
@@ -84,10 +84,10 @@ exec {{range .Cmd}}"{{.}}" {{end}}`),
 
 	initScriptBuilder := strings.Builder{}
 	if err := initScriptTemplate.Execute(&initScriptBuilder, map[string]interface{}{
-		"ExecutorEnv":      b.environmentVariables,
-		"ImageEnv":         b.imageConfig.Env,
-		"Cmd":              b.imageConfig.Cmd,
-		"WorkingDirectory": b.workingDirectory,
+		"ParsedExecutorEnv": parseEnv(b.environmentVariables),
+		"ParsedImageEnv":    parseEnv(b.imageConfig.Env),
+		"Cmd":               b.imageConfig.Cmd,
+		"WorkingDirectory":  b.workingDirectory,
 	}); err != nil {
 		panic(err)
 	}
@@ -96,6 +96,19 @@ exec {{range .Cmd}}"{{.}}" {{end}}`),
 	fmt.Println(initScriptContents)
 
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
+}
+
+func parseEnv(env []string) map[string]string {
+	result := make(map[string]string)
+
+	for _, e := range env {
+		parts := strings.SplitN(e, "=", 2)
+		if len(parts) == 2 {
+			result[parts[0]] = parts[1]
+		}
+	}
+
+	return result
 }
 
 func (b *RootFSBuilder) copyVolumesToMountedRootFS() error {
