@@ -70,6 +70,7 @@ mount sysfs /sys -t sysfs
 haveged # generate entropy
 
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
+echo "127.0.0.1       localhost" > /etc/hosts
 
 {{range $key, $value := .ParsedImageEnv -}}
 export {{$key}}="{{$value}}"
