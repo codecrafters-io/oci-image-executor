@@ -1,3 +1,13 @@
+current_version_number := $(shell git tag --list "v*" | sort -V | tail -n 1 | cut -c 2-)
+next_version_number := $(shell echo $$(($(current_version_number)+1)))
+
+build:
+	go build -o main ./cmd/
+
+release:
+	git tag v$(next_version_number)
+	git push origin master v$(next_version_number)
+
 create_test_image:
 	docker build -t test-image -f Dockerfile .
 	docker export -o image.tar $(shell docker create test-image)
@@ -5,9 +15,8 @@ create_test_image:
 create_redis_image:
 	docker export -o image.tar $(shell docker create redis:latest)
 
-test_executor:
+test_executor: build
 	sudo rm -rf /tmp/firecracker.socket
-	go build -o main ./cmd/
 	sudo ./main --image-tar=image.tar --image-config=image-config.json --volume /root/oci-image-executor:/var/opt/mounted-dir --env TEST=hey --working-dir="/var/opt/mounted-dir"
 
 kill_executor:
