@@ -103,7 +103,7 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 			},
 		},
 		KernelImagePath: "/root/firecracker-resources/vmlinux.bin",
-		KernelArgs:      "ro noapic nomodules reboot=k panic=1 tsc=reliable 8250.nr_uarts=0 ipv6.disable=1 pci=off i8042.noaux i8042.nomux i8042.nopnp i8042.dumbkbd init=/init",
+		KernelArgs:      "ro quiet loglevel=1 noapic nomodules reboot=k panic=1 tsc=reliable 8250.nr_uarts=0 ipv6.disable=1 pci=off i8042.noaux i8042.nomux i8042.nopnp i8042.dumbkbd init=/init",
 		LogLevel:        "Debug",
 		LogPath:         "/tmp/firecracker-logs",
 		MachineCfg: models.MachineConfiguration{
