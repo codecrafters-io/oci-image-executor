@@ -116,6 +116,10 @@ func parseEnv(env []string) map[string]string {
 
 func (b *RootFSBuilder) copyVolumesToMountedRootFS() error {
 	for hostPath, guestPath := range b.volumes {
+		if err := RunCommandAndLogToStderr("rm", "-rf", path.Join(b.mountedRootFSPath, guestPath)); err != nil {
+			return err
+		}
+
 		if err := RunCommandAndLogToStderr("cp", "-R", hostPath, path.Join(b.mountedRootFSPath, guestPath)); err != nil {
 			return err
 		}
