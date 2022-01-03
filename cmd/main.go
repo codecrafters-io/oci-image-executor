@@ -12,6 +12,7 @@ import (
 	"github.com/codecrafters-io/oci-image-executor/internal"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
 	"github.com/openlyinc/pointy"
+	"github.com/thanhpk/randstr"
 
 	firecracker "github.com/firecracker-microvm/firecracker-go-sdk"
 	log "github.com/sirupsen/logrus"
@@ -79,9 +80,11 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 		return fmt.Errorf("binary, %q, is not executable. Check permissions of binary", firecrackerBinary)
 	}
 
+	socketPath := fmt.Sprintf("/tmp/firecracker-%s.sock", randstr.Hex(32))
+
 	cmd := firecracker.VMCommandBuilder{}.
 		WithBin(firecrackerBinary).
-		WithSocketPath("/tmp/firecracker.socket").
+		WithSocketPath(socketPath).
 		WithStdin(os.Stdin).
 		WithStdout(os.Stdout).
 		WithStderr(os.Stderr).
@@ -119,7 +122,7 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 				},
 			},
 		},
-		SocketPath: "/tmp/firecracker.socket",
+		SocketPath: socketPath,
 	}
 	if err := config.Validate(); err != nil {
 		return err
