@@ -171,10 +171,18 @@ func (b *RootFSBuilder) unmountRootFS() error {
 
 func (b RootFSBuilder) Cleanup() {
 	if b.rootFSPath != "" {
-		os.Remove(b.rootFSPath)
+		fmt.Println("Removing rootfs", b.rootFSPath)
+		err := os.Remove(b.rootFSPath)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	if b.mountedRootFSPath != "" {
-		os.RemoveAll(b.mountedRootFSPath)
+		fmt.Println("Removing mountedrootfs", b.mountedRootFSPath)
+		err := os.RemoveAll(b.mountedRootFSPath)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
