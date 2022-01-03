@@ -81,6 +81,7 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 	}
 
 	socketPath := fmt.Sprintf("/tmp/firecracker-%s.sock", randstr.Hex(32))
+	netInterfaceName := fmt.Sprintf("fc-%s", randstr.Hex(12)) // 16 char max for interface names
 
 	cmd := firecracker.VMCommandBuilder{}.
 		WithBin(firecrackerBinary).
@@ -118,7 +119,7 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 			{
 				CNIConfiguration: &firecracker.CNIConfiguration{
 					NetworkName: "fcnet",
-					IfName:      "veth0",
+					IfName:      netInterfaceName,
 				},
 			},
 		},
