@@ -10,6 +10,7 @@ import (
 
 type Config struct {
 	Cmd                  []string
+	EnableConsole        bool              `long:"enable-console" description:"Enable console output" default:"false"`
 	ImageTarFilePath     string            `long:"image-tar" description:"Path to the image tar file" required:"true"`
 	ImageConfigFilePath  string            `long:"image-config" description:"Path to the image config file" required:"true"`
 	Volumes              map[string]string `long:"volume" description:"A file/directory to copy into the VM. Format: /path/to/host/file:/path/to/vm/file"`

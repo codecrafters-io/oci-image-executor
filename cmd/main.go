@@ -42,7 +42,7 @@ func main() {
 
 	rootFSBuilder.PrintDebugInfo()
 
-	if err := runVMM(context.Background(), rootFSPath); err != nil {
+	if err := runVMM(context.Background(), rootFSPath, config.EnableConsole); err != nil {
 		log.Fatalf(err.Error())
 	}
 
@@ -50,7 +50,7 @@ func main() {
 }
 
 // Run a vmm with a given set of options
-func runVMM(ctx context.Context, rootFSPath string) error {
+func runVMM(ctx context.Context, rootFSPath string, isConsoleEnabled bool) error {
 	vmmCtx, vmmCancel := context.WithCancel(ctx)
 	defer vmmCancel()
 
@@ -97,6 +97,14 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 	var memSize int64 = 1024
 	var htEnabled bool = false
 
+	var kernelArgs string
+
+	if isConsoleEnabled {
+		kernelArgs = "ro quiet loglevel=1 noapic nomodules reboot=k panic=1 tsc=reliable ipv6.disable=1 pci=off i8042.noaux i8042.nomux i8042.nopnp i8042.dumbkbd init=/init"
+	} else {
+		kernelArgs = "ro quiet loglevel=1 noapic nomodules reboot=k panic=1 tsc=reliable 8250.nr_uarts=0 ipv6.disable=1 pci=off i8042.noaux i8042.nomux i8042.nopnp i8042.dumbkbd init=/init"
+	}
+
 	config := firecracker.Config{
 		Drives: []models.Drive{
 			{
@@ -107,7 +115,7 @@ func runVMM(ctx context.Context, rootFSPath string) error {
 			},
 		},
 		KernelImagePath: "/root/firecracker-resources/vmlinux.bin",
-		KernelArgs:      "ro quiet loglevel=1 noapic nomodules reboot=k panic=1 tsc=reliable 8250.nr_uarts=0 ipv6.disable=1 pci=off i8042.noaux i8042.nomux i8042.nopnp i8042.dumbkbd init=/init",
+		KernelArgs:      kernelArgs,
 		LogLevel:        "Debug",
 		LogPath:         "/tmp/firecracker-logs",
 		MachineCfg: models.MachineConfiguration{
