@@ -25,6 +25,7 @@ func ParseConfig() Config {
 
 	if err != nil {
 		fmt.Println("Error parsing arguments.")
+		fmt.Println(err.Error())
 		os.Exit(11) // Helps differentiate between exit code from process and exit code from executor
 	}
 
