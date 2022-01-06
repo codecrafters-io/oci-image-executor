@@ -142,7 +142,8 @@ func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
 	b.rootFSPath = rootFSFile.Name()
 	b.mountedRootFSPath = mountedRootFSPath
 
-	if err = RunCommandAndLogToStderr("fallocate", "-l", "3G", b.rootFSPath); err != nil {
+	// TODO: Bring this down to 3G
+	if err = RunCommandAndLogToStderr("fallocate", "-l", "10G", b.rootFSPath); err != nil {
 		return err
 	}
 
