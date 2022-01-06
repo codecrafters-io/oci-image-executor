@@ -100,7 +100,7 @@ func runVMM(ctx context.Context, rootFSPath string, isConsoleEnabled bool) error
 	var kernelArgs string
 
 	if isConsoleEnabled {
-		kernelArgs = "ro loglevel=1 noapic nomodules reboot=k panic=1 tsc=reliable ipv6.disable=1 pci=off init=/init"
+		kernelArgs = "console=ttyS0 reboot=k panic=1 pci=off nomodules init=/init"
 	} else {
 		kernelArgs = "ro quiet loglevel=1 noapic nomodules reboot=k panic=1 tsc=reliable 8250.nr_uarts=0 ipv6.disable=1 pci=off i8042.noaux i8042.nomux i8042.nopnp i8042.dumbkbd init=/init"
 	}
