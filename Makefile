@@ -16,7 +16,6 @@ create_redis_image:
 	docker export -o image.tar $(shell docker create redis:latest)
 
 test_executor: build
-	sudo rm -rf /tmp/firecracker.socket
 	sudo ./main --image-tar=image.tar --image-config=image-config.json --volume /var/opt/oci-image-executor:/var/opt/mounted-dir --env TEST=hey --working-dir="/var/opt/mounted-dir" /usr/bin/ls
 
 kill_executor:
@@ -25,3 +24,6 @@ kill_executor:
 download_kernel:
 	mkdir -p /root/firecrafter-resources
 	wget https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin -P /root/firecracker-resources/
+
+test_boot_time: download_kernel create_test_image
+	time make test_executor

@@ -37,3 +37,9 @@ vagrant ssh
 cd /var/opt/oci-image-executor
 make create_test_image # in the vagrant shell
 ```
+
+# Testing Boot Time
+
+To test the boot time of a barebones image, run the following: 
+
+- `make test_boot_time`
