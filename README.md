@@ -42,4 +42,5 @@ make create_test_image # in the vagrant shell
 
 To test the boot time of a barebones image, run the following: 
 
+- `bash setup.sh`
 - `make test_boot_time`

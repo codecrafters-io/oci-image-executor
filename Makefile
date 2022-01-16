@@ -25,5 +25,5 @@ download_kernel:
 	mkdir -p /root/firecrafter-resources
 	wget https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin -P /root/firecracker-resources/
 
-test_boot_time: download_kernel create_test_image
+test_boot_time: create_test_image
 	time make test_executor
