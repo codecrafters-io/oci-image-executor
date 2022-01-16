@@ -27,6 +27,7 @@ cp fcnet.conflist /etc/cni/conf.d/
 
 mkdir -p /opt/cni/bin
 
+rm -rf plugins
 git clone https://github.com/containernetworking/plugins
 pushd plugins
 git checkout v0.8.7
@@ -36,6 +37,7 @@ cp bin/host-local /opt/cni/bin
 cp bin/firewall /opt/cni/bin
 popd
 
+rm -rf tc-redirect-tap
 git clone https://github.com/awslabs/tc-redirect-tap
 pushd tc-redirect-tap
 git checkout a0300978797dabc3b4ffaa4a30817d6e8dd10018
