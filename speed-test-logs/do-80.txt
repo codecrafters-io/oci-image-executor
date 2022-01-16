@@ -1,0 +1,48 @@
+00.000024 Before RootFS Build 2022.01.16 01:04:10.100
+00.009365 mke2fs 1.45.5 (07-Jan-2020)
+00.011237 Discarding device blocks: done
+00.011443 Creating filesystem with 2621440 4k blocks and 655360 inodes
+00.011518 Filesystem UUID: b4efa6b8-7563-45f6-b9e3-94f619eea23f
+00.011600 Superblock backups stored on blocks:
+00.011727       32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632
+00.011751
+00.011897 Allocating group tables: done
+00.012016 Writing inode tables: done
+00.016140 Creating journal (16384 blocks): done
+00.020120 Writing superblocks and filesystem accounting information: done
+00.020225
+00.194600 #!/bin/sh
+00.194663 set -e
+00.194672 mount proc /proc -t proc
+00.194687 mount sysfs /sys -t sysfs
+00.194710 haveged # generate entropy
+00.194719
+00.194729 echo "nameserver 8.8.8.8" > /etc/resolv.conf
+00.194737 echo "127.0.0.1       localhost" > /etc/hosts
+00.194745
+00.194755 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+00.194764 export TEST="yes"
+00.194775
+00.194784
+00.194797 export TEST="hey"
+00.194805
+00.194813
+00.194822 cd /var/opt/mounted-dir
+00.194832
+00.194842 exec "/usr/bin/ls"
+00.448310 After RootFS Build 2022.01.16 01:04:11.110
+00.448382 rootfsbuilder paths /tmp/oci-image-executor-root-fs-mnt-540564485 /tmp/oci-image-executor-root-fs-663647678
+00.651675 time="2022-01-16T01:04:11Z" level=info msg="Called startVMM(), setting up a VMM on /tmp/firecracker-2f1d9cd51d2c8a078b235b88de4cefbd760365363d07e750e10a79e37567c731.sock"
+00.663328 time="2022-01-16T01:04:11Z" level=info msg="VMM metrics disabled."
+00.663799 time="2022-01-16T01:04:11Z" level=info msg="refreshMachineConfiguration: [GET /machine-config][200] getMachineConfigurationOK  &{CPUTemplate: HtEnabled:0xc00047c164 MemSizeMib:0xc00047c158 VcpuCount:0xc00047c150}"
+00.664080 time="2022-01-16T01:04:11Z" level=info msg="PutGuestBootSource: [PUT /boot-source][204] putGuestBootSourceNoContent "
+00.664114 time="2022-01-16T01:04:11Z" level=info msg="Attaching drive /tmp/oci-image-executor-root-fs-663647678, slot rootfs, root true."
+00.664360 time="2022-01-16T01:04:11Z" level=info msg="Attached drive /tmp/oci-image-executor-root-fs-663647678: [PUT /drives/{drive_id}][204] putGuestDriveByIdNoContent "
+00.664385 time="2022-01-16T01:04:11Z" level=info msg="Attaching NIC tap0 (hwaddr f6:0d:f2:27:eb:03) at index 1"
+00.686648 time="2022-01-16T01:04:11Z" level=info msg="startInstance successful: [PUT /actions][204] createSyncActionNoContent "
+02.007643 time="2022-01-16T01:04:12Z" level=info msg="firecracker exited: status=0"
+02.133795 time="2022-01-16T01:04:12Z" level=info msg="Start machine was happy"
+02.134002 no error!Removing rootfs /tmp/oci-image-executor-root-fs-663647678
+02.134092 Removing mountedrootfs /tmp/oci-image-executor-root-fs-mnt-540564485
+02.156978 1.34user 0.30system 0:02.17elapsed 75%CPU (0avgtext+0avgdata 55144maxresident)k
+02.157029 2562inputs+280832outputs (2major+24977minor)pagefaults 0swaps
