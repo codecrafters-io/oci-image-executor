@@ -3,18 +3,13 @@ set -e
 echo "installing docker"
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl gnupg lsb-release
-curl -fSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install -y docker-ce=5:20.10.11~3-0~ubuntu-focal docker-ce-cli=5:20.10.11~3-0~ubuntu-focal containerd.io
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh ./get-docker.sh
 
 echo "installing firecracker"
 curl -SL https://github.com/firecracker-microvm/firecracker/releases/download/v0.25.2/firecracker-v0.25.2-x86_64.tgz -o firecracker.tgz
 tar -xf firecracker.tgz
 sudo cp release-v0.25.2-x86_64/firecracker-v0.25.2-x86_64 /usr/bin/firecracker
-sudo cp release-v0.25.2-x86_64/jailer-v0.25.2-x86_64 /usr/bin/jailer
 rm -rf release-v0.25.2-x86_64 firecracker.tgz
 
 echo "installing make"
@@ -47,3 +42,9 @@ git checkout a0300978797dabc3b4ffaa4a30817d6e8dd10018
 make
 cp tc-redirect-tap /opt/cni/bin
 popd
+
+mkdir -p /root/firecracker-resources
+curl -sS --fail -Lo /root/firecracker-resources/vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin
+
+mkdir -p /etc/cni/conf.d
+cp config/fcnet.conflist /etc/cni/conf.d/
