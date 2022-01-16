@@ -23,7 +23,7 @@ echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
 export PATH=$PATH:/usr/local/go/bin
 
 mkdir -p /etc/cni/conf.d
-cp config/fcnet.conflist /etc/cni/conf.d/
+cp fcnet.conflist /etc/cni/conf.d/
 
 mkdir -p /opt/cni/bin
 
