@@ -42,5 +42,7 @@ make create_test_image # in the vagrant shell
 
 To test the boot time of a barebones image, run the following: 
 
+- `git clone https://github.com/codecrafters-io/oci-image-executor.git`
 - `bash setup.sh`
+- `source ~/.bashrc` (to pickup the GOPATH addition)
 - `make test_boot_time`

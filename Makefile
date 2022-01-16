@@ -25,5 +25,5 @@ download_kernel:
 	mkdir -p /root/firecrafter-resources
 	wget https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin -P /root/firecracker-resources/
 
-test_boot_time: create_test_image
-	time make test_executor
+test_boot_time:
+	time ./main --image-tar=image.tar --image-config=image-config.json --volume $$(pwd):/var/opt/mounted-dir --env TEST=hey --working-dir="/var/opt/mounted-dir" /usr/bin/ls 2>&1 | ts -s -m "%.S"
