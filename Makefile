@@ -16,7 +16,7 @@ create_redis_image:
 	docker export -o image.tar $(shell docker create redis:latest)
 
 test_executor: build
-	sudo ./main --image-tar=image.tar --image-config=image-config.json --volume /var/opt/oci-image-executor:/var/opt/mounted-dir --env TEST=hey --working-dir="/var/opt/mounted-dir" /usr/bin/ls
+	sudo ./main --image-tar=image.tar --image-config=image-config.json --volume $$(pwd):/var/opt/mounted-dir --env TEST=hey --working-dir="/var/opt/mounted-dir" /usr/bin/ls
 
 kill_executor:
 	kill $$(ps aux | grep firecracker | head -n 2 | tail -n 1 | awk '{print $$2}')
