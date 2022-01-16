@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
 )
 
@@ -121,17 +122,27 @@ func parseEnv(env []string) map[string]string {
 }
 
 func (b *RootFSBuilder) copyVolumesToMountedRootFS() error {
-	for hostPath, guestPath := range b.volumes {
-		if err := RunCommandAndLogToStderr("rm", "-rf", path.Join(b.mountedRootFSPath, guestPath)); err != nil {
-			return err
-		}
+	var wg sync.WaitGroup
+	var globalErr error
 
-		if err := RunCommandAndLogToStderr("cp", "-R", hostPath, path.Join(b.mountedRootFSPath, guestPath)); err != nil {
-			return err
-		}
+	for hostPath, guestPath := range b.volumes {
+		wg.Add(1)
+
+		go func(hostPath string, guestPath string) {
+			defer wg.Done()
+
+			if err := RunCommandAndLogToStderr("rm", "-rf", path.Join(b.mountedRootFSPath, guestPath)); err != nil {
+				globalErr = err
+			}
+
+			if err := RunCommandAndLogToStderr("cp", "-R", hostPath, path.Join(b.mountedRootFSPath, guestPath)); err != nil {
+				globalErr = err
+			}
+		}(hostPath, guestPath)
 	}
 
-	return nil
+	wg.Wait()
+	return globalErr
 }
 
 func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
