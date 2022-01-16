@@ -56,6 +56,12 @@ func (b *RootFSBuilder) Build() (string, error) {
 
 	fmt.Println("Added init script to empty rootfs")
 
+	if err := b.unmountRootFS(); err != nil {
+		return "", err
+	}
+
+	fmt.Println("Unmounted root fs")
+
 	return b.rootFSPath, nil
 }
 
@@ -171,12 +177,6 @@ func (b *RootFSBuilder) unmountRootFS() error {
 }
 
 func (b RootFSBuilder) Cleanup() {
-	if err := b.unmountRootFS(); err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Unmounted root fs")
-
 	if b.rootFSPath != "" {
 		fmt.Println("Removing rootfs", b.rootFSPath)
 		err := os.Remove(b.rootFSPath)
@@ -185,8 +185,6 @@ func (b RootFSBuilder) Cleanup() {
 		}
 	}
 
-	fmt.Println("Removed root fs")
-
 	if b.mountedRootFSPath != "" {
 		fmt.Println("Removing mountedrootfs", b.mountedRootFSPath)
 		err := os.RemoveAll(b.mountedRootFSPath)
@@ -194,6 +192,4 @@ func (b RootFSBuilder) Cleanup() {
 			panic(err)
 		}
 	}
-
-	fmt.Println("Removed mounted root fs")
 }
