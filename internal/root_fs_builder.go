@@ -180,7 +180,7 @@ func (b *RootFSBuilder) createAndMountEmptyRootFS() error {
 }
 
 func (b *RootFSBuilder) unmountRootFS() error {
-	if err := RunCommandAndLogToStderr("umount", b.mountedRootFSPath); err != nil {
+	if err := RunCommandAndLogToStderr("umount", "-l", b.mountedRootFSPath); err != nil {
 		return err
 	}
 
