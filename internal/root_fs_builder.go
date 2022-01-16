@@ -49,19 +49,17 @@ func (b *RootFSBuilder) Build() (string, error) {
 		return "", err
 	}
 
-	fmt.Println("Copied volumes to mounted rootfs")
-
 	if err := b.addInitScriptToMountedRootFS(); err != nil {
 		return "", err
 	}
 
-	fmt.Println("Added init script to empty rootfs")
+	if err := RunCommandAndLogToStderr("sync"); err != nil {
+		return "", err
+	}
 
 	if err := b.unmountRootFS(); err != nil {
 		return "", err
 	}
-
-	fmt.Println("Unmounted root fs")
 
 	return b.rootFSPath, nil
 }
