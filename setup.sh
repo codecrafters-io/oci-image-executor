@@ -23,7 +23,7 @@ echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
 export PATH=$PATH:/usr/local/go/bin
 
 mkdir -p /etc/cni/conf.d
-cp /var/opt/oci-image-executor/fcnet.conflist /etc/cni/conf.d/
+cp config/fcnet.conflist /etc/cni/conf.d/
 
 mkdir -p /opt/cni/bin
 
@@ -45,6 +45,3 @@ popd
 
 mkdir -p /root/firecracker-resources
 curl -sS --fail -Lo /root/firecracker-resources/vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin
-
-mkdir -p /etc/cni/conf.d
-cp config/fcnet.conflist /etc/cni/conf.d/
