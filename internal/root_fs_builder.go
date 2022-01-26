@@ -111,6 +111,7 @@ exec {{range .Cmd}}"{{.}}" {{end}}`),
 	}
 
 	initScriptContents := initScriptBuilder.String()
+	fmt.Println(initScriptContents)
 	return ioutil.WriteFile(filepath.Join(b.mountedRootFSPath, "init"), []byte(initScriptContents), 0777)
 }
 
