@@ -92,10 +92,18 @@ cd {{.WorkingDirectory}}
 exec {{range .Cmd}}"{{.}}" {{end}}`),
 	)
 
+	parsedExecutorEnv := parseEnv(b.environmentVariables)
+	parsedImageEnv := parseEnv(b.imageConfig.Env)
+
+	// If both the image & CLI don't specify home, let's default to root.
+	if parsedImageEnv["HOME"] == "" && parsedExecutorEnv["HOME"] == "" {
+		parsedImageEnv["HOME"] = "/root"
+	}
+
 	initScriptBuilder := strings.Builder{}
 	if err := initScriptTemplate.Execute(&initScriptBuilder, map[string]interface{}{
-		"ParsedExecutorEnv": parseEnv(b.environmentVariables),
-		"ParsedImageEnv":    parseEnv(b.imageConfig.Env),
+		"ParsedExecutorEnv": parsedExecutorEnv,
+		"ParsedImageEnv":    parsedImageEnv,
 		"Cmd":               b.cmd,
 		"WorkingDirectory":  b.workingDirectory,
 	}); err != nil {
